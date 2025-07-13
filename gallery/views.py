@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from .models import Image, Tag, Like, Dislike, Profile
 from django.contrib.auth.models import User
+from .forms import ImageForm
 
 # create your views here.
 
@@ -12,14 +13,14 @@ from django.contrib.auth.models import User
 def image_list_view(request):
     images = Image.objects.all().order_by('-created_at')
     tags = Tag.objects.all()
-    return render(request, 'gallery/home.html', {'images': images, 'tags': tags})
+    return render(request, 'home.html', {'images': images, 'tags': tags})
 
 # View iamage Details
 def image_detail_view(request, image_id):
     image = get_object_or_404(Image, id=image_id)
     likes = image.likes.count()
     dislikes = image.dislikes.count()
-    return render(request, 'gallery/image_detail.html', {'image': image, 'likes': likes, 'dislikes': dislikes})
+    return render(request, 'image_detail.html', {'image': image, 'likes': likes, 'dislikes': dislikes})
 
 # Like a Image
 @login_required
@@ -48,7 +49,7 @@ def register_view(request):
             return redirect('gallery')
     else:
         form = UserCreationForm()
-    return render(request, 'gallery/register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
 
 # Login User
 def login_view(request):
@@ -60,7 +61,7 @@ def login_view(request):
             return redirect('gallery')
     else:
         form = AuthenticationForm()
-    return render(request, 'gallery/login.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 # Logout User
 def logout_view(request):
@@ -70,7 +71,7 @@ def logout_view(request):
 # View user profile
 @login_required
 def profile_view(request):
-    return render(request, 'gallery/profile.html', {'profile': request.user.profile})
+    return render(request, 'profile.html', {'profile': request.user.profile})
 
 # Update profile
 @login_required
@@ -85,4 +86,19 @@ def update_profile(request):
         profile.save()
         messages.success(request, 'Profile updated successfully!')
         return redirect('profile')
-    return render(request, 'gallery/edit_profile.html')
+    return render(request, 'edit_profile.html')
+
+@login_required
+def upload_image_view(request):
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.save(commit=False)
+            image.uploaded_by = request.user
+            image.save()
+            form.save_m2m()  # Save tags
+            messages.success(request, "Image uploaded successfully.")
+            return redirect('image_list')
+    else:
+        form = ImageForm()
+    return render(request, 'upload_image.html', {'form': form})

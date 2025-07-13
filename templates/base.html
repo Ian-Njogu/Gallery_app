@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Photo Gallery</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
     <nav class="bg-white shadow py-4 mb-6">
@@ -11,8 +11,9 @@
             <a href="{% url 'image_list' %}" class="text-xl font-bold">Gallery</a>
             <div>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'profile' %}" class="mr-4 hover:underline">Profile</a>
-                    <a href="{% url 'logout' %}" class="text-red-500 hover:underline">Logout</a>
+                <a href="{% url 'upload_image' %}" class="mr-4 hover:underline">Upload</a>
+                <a href="{% url 'profile' %}" class="mr-4 hover:underline">Profile</a>
+                <a href="{% url 'logout' %}" class="text-red-500 hover:underline">Logout</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="mr-4 hover:underline">Login</a>
                     <a href="{% url 'register' %}" class="hover:underline">Register</a>
