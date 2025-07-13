@@ -9,33 +9,33 @@ from django.contrib.auth.models import User
 # create your views here.
 
 # Homepage – Photo Gallery
-def photo_list_view(request):
-    photos = Image.objects.all().order_by('-created_at')
+def image_list_view(request):
+    images = Image.objects.all().order_by('-created_at')
     tags = Tag.objects.all()
-    return render(request, 'gallery/home.html', {'photos': photos, 'tags': tags})
+    return render(request, 'gallery/home.html', {'images': images, 'tags': tags})
 
-# View Photo Details
-def photo_detail(request, photo_id):
-    photo = get_object_or_404(Image, id=photo_id)
-    likes = photo.likes.count()
-    dislikes = photo.dislikes.count()
-    return render(request, 'gallery/photo_detail.html', {'photo': photo, 'likes': likes, 'dislikes': dislikes})
+# View iamage Details
+def image_detail_view(request, image_id):
+    image = get_object_or_404(Image, id=image_id)
+    likes = image.likes.count()
+    dislikes = image.dislikes.count()
+    return render(request, 'gallery/image_detail.html', {'image': image, 'likes': likes, 'dislikes': dislikes})
 
-# Like a Photo
+# Like a Image
 @login_required
-def like_photo(request, photo_id):
-    photo = get_object_or_404(Image, id=photo_id)
-    Like.objects.get_or_create(user=request.user, image=photo)
-    Dislike.objects.filter(user=request.user, image=photo).delete()
-    return redirect('photo_detail', photo_id=photo.id)
+def like_image(request, image_id):
+    image = get_object_or_404(Image, id=image_id)
+    Like.objects.get_or_create(user=request.user, image=image)
+    Dislike.objects.filter(user=request.user, image=image).delete()
+    return redirect('image_detail', image_id=image.id)
 
-# Dislike a Photo
+# Dislike a Image
 @login_required
-def dislike_photo(request, photo_id):
-    photo = get_object_or_404(Image, id=photo_id)
-    Dislike.objects.get_or_create(user=request.user, image=photo)
-    Like.objects.filter(user=request.user, image=photo).delete()
-    return redirect('photo_detail', photo_id=photo.id)
+def dislike_image(request, image_id):
+    image = get_object_or_404(Image, id=image_id)
+    Dislike.objects.get_or_create(user=request.user, image=image)
+    Like.objects.filter(user=request.user, image=image).delete()
+    return redirect('image_detail', image_id=image.id)
 
 # Register New User
 def register_view(request):
