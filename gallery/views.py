@@ -20,7 +20,7 @@ def image_detail_view(request, image_id):
     image = get_object_or_404(Image, id=image_id)
     likes = image.likes.count()
     dislikes = image.dislikes.count()
-    return render(request, 'image_detail.html', {'image': image, 'likes': likes, 'dislikes': dislikes})
+    return render(request, 'image_details.html', {'image': image, 'likes': likes, 'dislikes': dislikes})
 
 # Like a Image
 @login_required
@@ -46,7 +46,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Account created successfully!')
-            return redirect('gallery')
+            return redirect('image_list')
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
@@ -58,7 +58,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('gallery')
+            return redirect('image_list')
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
@@ -79,7 +79,7 @@ def update_profile(request):
     if request.method == 'POST':
         bio = request.POST.get('bio')
         pic = request.FILES.get('profile_picture')
-        profile = request.user.profile
+        profile = request.getattr(request.user, 'profile', None)
         profile.bio = bio
         if pic:
             profile.profile_picture = pic
